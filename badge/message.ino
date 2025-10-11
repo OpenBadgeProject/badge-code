@@ -158,3 +158,9 @@ void setFrameBuffer(uint8_t x, uint8_t y) {
   if (x < 8 && y < 8)
     frameBuffer[x] |= 1 << y;
 }
+
+// unSet one point on the framebuffer
+void unSetFrameBuffer(uint8_t x, uint8_t y) {
+  if (x < 8 && y < 8)
+    frameBuffer[x] &= ((1 << y) ^ 0xFF);
+}

@@ -157,3 +157,94 @@ void spaceGame() {
     setFrameBuffer(ship_x/4096 + 1, 7);
   }
 }
+
+void lifeGame() {
+  uint8_t x = 4;
+  uint8_t y = 4;
+  bool show_dot = true;
+  bool run_game = false;
+  bool screen_empty = false;
+  uint8_t neighbors[8][8];
+  bool lifeScreen [8][8] = { // You can set these if you want to start with a shape
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false },
+    { false, false, false, false, false, false, false, false }
+  };
+
+  while(true) {
+    LOOP(0);
+
+    if (run_game) {
+      if (NEW_BUTTON(BTN_B)) return;
+      if (TICK(100)) {
+        if (screen_empty) return;
+        clearFrameBuffer();
+        // Figure out the neighbors
+        memset(neighbors, 0, 64);
+        for (int i = 0; i < 8; i++) {
+          for (int j = 0; j < 8; j++) {
+            if (i > 0 && j > 0 && lifeScreen[i-1][j-1]) neighbors[i][j]++;
+            if (i > 0 && lifeScreen[i-1][j]) neighbors[i][j]++;
+            if (i > 0 && j < 7 && lifeScreen[i-1][j+1]) neighbors[i][j]++;
+            if (j > 0 && lifeScreen[i][j-1]) neighbors[i][j]++;
+            if (j < 7 && lifeScreen[i][j+1]) neighbors[i][j]++;
+            if (i < 7 && j > 0 && lifeScreen[i+1][j-1]) neighbors[i][j]++;
+            if (i < 7 && lifeScreen[i+1][j]) neighbors[i][j]++;
+            if (i < 7 && j < 7 && lifeScreen[i+1][j+1]) neighbors[i][j]++;
+          }
+        }
+  
+        // Run the rules
+        for (int i = 0; i < 8; i++) {
+          for (int j = 0; j < 8; j++) {
+            if (lifeScreen[i][j] && neighbors[i][j] < 2) lifeScreen[i][j] = false;
+            else if (lifeScreen[i][j] && neighbors[i][j] > 3) lifeScreen[i][j] = false;
+            else if (!lifeScreen[i][j] && neighbors[i][j] == 3) lifeScreen[i][j] = true;
+          }
+        }
+        // Draw the screen
+        screen_empty = true;
+        for (int i = 0; i < 8 ; i++) {
+          for (int j = 0; j < 8; j++) {
+            if (lifeScreen[i][j]) {
+              setFrameBuffer(i, j);
+              screen_empty = false;
+            }
+          }
+        }
+      }
+      
+    } else {
+      clearFrameBuffer();
+      // Move around a cursor
+      if (NEW_BUTTON(BTN_RIGHT) && x < 7) x++;
+      if (NEW_BUTTON(BTN_DOWN) && y < 7) y++;
+      if (NEW_BUTTON(BTN_UP) && y > 0) y--;
+      if (NEW_BUTTON(BTN_LEFT) && x > 0) x--;
+  
+      if (NEW_BUTTON(BTN_A)) {
+        lifeScreen[x][y] = !lifeScreen[x][y];
+      } else if (NEW_BUTTON(BTN_B)) {
+        run_game = true;
+      }
+  
+      for (int i = 0; i < 8 ; i++) {
+        for (int j = 0; j < 8; j++) {
+          if (lifeScreen[i][j]) setFrameBuffer(i, j);
+        }
+      }
+  
+      // blink the dot
+      if (TICK(50)) {
+        show_dot = !show_dot;
+      }
+      if (show_dot) setFrameBuffer(x, y);
+      else unSetFrameBuffer(x, y);
+    }
+  }
+}

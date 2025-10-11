@@ -106,23 +106,14 @@ void showMessage()
 
     // This block figures out where the curent letter we're to display is
     // messageCount is the current row we are to display for the message
-    if (((messageCount) / 6) >= messageLen) {
-      // This the case where we hit the end of the message
-      // and have to wrap back to 0
-      if (progmemMessage) {
-        letterPos = pgm_read_word(message) - 0x20;
-      } else{ 
-        letterPos = message[0] - 0x20;
-      }
-      // We subtrace 0x20 from the letter so our font index lines up
+
+    uint8_t pgmIndex = ((messageCount) / 6) % messageLen;
+    if (progmemMessage) {
+      letterPos = pgm_read_word(message + pgmIndex) - 0x20;
     } else {
-      uint8_t pgmIndex = (messageCount) / 6;
-      if (progmemMessage) {
-        letterPos = pgm_read_word(message + pgmIndex) - 0x20;
-      } else {
-        letterPos = message[pgmIndex] - 0x20;
-      }
+      letterPos = message[pgmIndex] - 0x20;
     }
+
 
     // pos contians the actual row we are going to display
     uint8_t pos = (messageCount) % 6;

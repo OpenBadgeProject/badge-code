@@ -98,5 +98,20 @@ void shiftRegisters() {
         currentRow = currentRow << 1;
         PORTB |= (1 << latchPin); // HIGH
         PORTB &= ~(1 << latchPin); // LOW
-      }  
+      }
+      // Clear the screen
+      // If we don't shift in nothing after a short delay,
+      // the right most column is noticably brighter than the others
+      for (int i = 0; i < 100; i++) {
+        __asm__("nop\n\t");
+      }
+      PORTB &= ~(1 << latchPin); // LOW
+      PORTB &= ~(1 << dataPin1); // LOW
+      PORTB &= ~(1 << dataPin2); // LOW
+      for (int j = 0; j < 8; j++) {
+        PORTB |= (1 << clockPin); // HIGH
+        PORTB &= ~(1 << clockPin); // LOW
+      }
+      PORTB |= (1 << latchPin); // HIGH
+      PORTB &= ~(1 << latchPin); // LOW
 }

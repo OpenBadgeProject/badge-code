@@ -12,7 +12,7 @@
 //#define SpaceGame
 //#define RainGame
 //#define BlockGame
-#define LifeGame
+//#define LifeGame
 //#define CustomMessage
 //#define EnableTests
 

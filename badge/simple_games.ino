@@ -248,3 +248,105 @@ void lifeGame() {
     }
   }
 }
+
+void raceGame() {
+  int16_t car = 4 * 4096;
+  uint8_t updateCount = 3;
+  int8_t hazard = -1;
+  uint8_t hazardCount = 0;
+  uint8_t col = 0;
+  uint8_t len = 0;
+  int8_t score = 0;
+  uint8_t carSpeed = 20;
+  byte raceScreen[] = {0,0,0,0,0,0,0,0};
+
+  while(true) {
+    LOOP(0);
+    clearFrameBuffer();
+  
+    if (NEW_BUTTON(BTN_RIGHT) && car < 7) car++;
+    if (NEW_BUTTON(BTN_LEFT) && car > 0) car--;
+
+    if (PUSH_BUTTON(BTN_RIGHT) && car < 32668) {
+      car = car + 150;
+    }
+    if (PUSH_BUTTON(BTN_LEFT) && car > -1) {
+      car = car - 150;
+    }
+
+    if (TICK(carSpeed)) {
+      for (int i = 0; i < 8; i++) {
+        raceScreen[i] = raceScreen[i] << 1;
+      }
+
+      if (updateCount == 0) {
+        switch (hazard) {
+          case -1:
+            hazard = RANDOM(3);
+            col = RANDOM(6);
+            hazardCount = 0;
+            len = RANDOM(7);
+            if (len < 2) len = 2;
+            score++;
+            break;
+          case 0:
+            if (hazardCount >= len) {
+              updateCount = RANDOM(7);
+              hazard = -1;
+            }
+            raceScreen[col] |= 0x01;
+            hazardCount++;
+            break;
+          case 1:
+            if (hazardCount >= len) {
+              updateCount = RANDOM(7);
+              hazard = -1;
+            }
+            if (col > 6) {
+              raceScreen[7] |= 0x01;
+              raceScreen[6] |= 0x01;
+            } else {
+              raceScreen[col] |= 0x01;
+              raceScreen[col+1] |= 0x01;
+            }
+            hazardCount++;
+            break;
+          case 2:
+            if (hazardCount >= len) {
+              updateCount = RANDOM(7);
+              hazard = -1;
+            }
+            if (col > 5) {
+              raceScreen[7] |= 0x01;
+              raceScreen[6] |= 0x01;
+              raceScreen[5] |= 0x01;
+            } else {
+              raceScreen[col] |= 0x01;
+              raceScreen[col+1] |= 0x01;
+              raceScreen[col+2] |= 0x01;
+            }
+            hazardCount++;
+            break;
+          default:
+            updateCount = 0;
+            hazard = -1;
+        }
+
+      } else {
+        updateCount--;
+      }
+    }
+
+    for (int i = 0; i < 8; i++) {
+      frameBuffer[i] = raceScreen[i];
+    }
+
+    if (frameBuffer[car/4096] & 0xC0) {
+      printScore(score);
+      return;
+    }
+
+    setFrameBuffer(car/4096, 6);
+    setFrameBuffer(car/4096, 7);
+  }
+}

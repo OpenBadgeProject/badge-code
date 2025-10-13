@@ -13,6 +13,7 @@
 //#define RainGame
 //#define BlockGame
 //#define LifeGame
+//#define RaceGame
 //#define CustomMessage
 //#define EnableTests
 
@@ -122,6 +123,7 @@ void pongGame();
 void spaceGame();
 void showRain();
 void lifeGame();
+void raceGame();
 void customMessage();
 uint32_t random32();
 void teh_code();
@@ -143,6 +145,7 @@ const char menu6[] PROGMEM = "Rain ";
 const char menu7[] PROGMEM = "Custom Message ";
 const char menu8[] PROGMEM = "Badgetris ";
 const char menu9[] PROGMEM = "Conway's Life ";
+const char menu10[] PROGMEM = "Race ";
 
 typedef struct badgeStruct {
   const char *programName;
@@ -170,6 +173,12 @@ badgeStruct mainMenu[] = {
   {
     menu9,
     (*lifeGame)
+  },
+#endif
+#ifdef RaceGame
+  {
+    menu10,
+    (*raceGame)
   },
 #endif
 #ifdef RainGame

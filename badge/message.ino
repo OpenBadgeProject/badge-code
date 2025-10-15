@@ -155,3 +155,23 @@ void unSetFrameBuffer(uint8_t x, uint8_t y) {
   if (x < 8 && y < 8)
     frameBuffer[x] &= ((1 << y) ^ 0xFF);
 }
+
+void secretPassword() {
+  unsigned char newString[100];
+  unsigned char *strPtr = newString;
+
+  getString(newString);
+
+  // Worst checksum ever
+  uint16_t checksum = 0;
+  while(*strPtr != '\0') {
+    checksum += *strPtr++;
+  }
+
+  // hunter2
+  if (checksum == 712) {
+    printMessage(yes, true);
+  } else {
+    printMessage(no, true);
+  }
+}

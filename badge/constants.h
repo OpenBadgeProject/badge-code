@@ -15,6 +15,7 @@
 //#define LifeGame
 //#define RaceGame
 //#define CustomMessage
+//#define SecretPassword
 //#define EnableTests
 
 // Comment this out if you don't want a secret code
@@ -128,9 +129,12 @@ void customMessage();
 uint32_t random32();
 void teh_code();
 void badgeBlock();
+void secretPassword();
 void getString(unsigned char *theString);
 
-
+// Password strings
+const char yes[] PROGMEM = "Correct ";
+const char no[] PROGMEM = "Wrong ";
 
 // Main Menu things
 
@@ -146,6 +150,7 @@ const char menu7[] PROGMEM = "Custom Message ";
 const char menu8[] PROGMEM = "Badgetris ";
 const char menu9[] PROGMEM = "Conway's Life ";
 const char menu10[] PROGMEM = "Race ";
+const char menu11[] PROGMEM = "Enter code ";
 
 typedef struct badgeStruct {
   const char *programName;
@@ -157,6 +162,12 @@ badgeStruct mainMenu[] = {
     menu0,
     NULL
   },
+#ifdef SecretPassword
+  {
+    menu11,
+    (*secretPassword)
+  },
+#endif
 #ifdef CustomMessage
   {
     menu7,

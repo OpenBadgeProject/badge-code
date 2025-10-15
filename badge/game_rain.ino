@@ -1,5 +1,10 @@
-
 #include "constants.h"
+
+/*
+ * Show a rain pattern on the screen
+ * This is interesting becuase it draws circles
+ * 
+ */
 
 void showRain() {
   uint8_t x = 4;

@@ -1,10 +1,9 @@
 /*
  * menu
  * 
- * Display the main menu. When a key is pressed on the
- * default message screen, the menu is loaded. We then
- * launch other subroutines from here, or go back to the
- * message screen
+ * Display a menu
+ * 
+ * The custom message function is just a menu
  */
 
 #include "constants.h"
@@ -68,62 +67,11 @@ void setCustomMessage() {
   }
 }
 
-void getString(unsigned char *theString) {
-  int8_t currentChar = 0x21;
-  uint8_t currentPos = 0;
-  uint8_t maxLen = 0;
-  clearFrameBuffer();
-  while(1) {
-    LOOP(0);
-
-    for (int i = 0; i < 5; i++) {
-      byte the_char = pgm_read_byte(font + (currentChar * 5) + i);
-      frameBuffer[i] = the_char;
-    }
-    frameBuffer[6] = currentPos;
-    frameBuffer[7] = maxLen;
-
-    if (PUSH_BUTTON(BTN_DOWN)) {
-      if (TICK(30)) {
-        if (currentChar == 94) {
-          currentChar = 0;
-        } else {
-          currentChar++;
-        }
-      }
-    } else if (PUSH_BUTTON(BTN_UP)) {
-      if (TICK(30)) {
-        if (currentChar == 0) {
-          currentChar = 94;
-        } else {
-          currentChar--;
-        }
-      }
-    } else if (NEW_BUTTON(BTN_LEFT)) {
-      if (currentPos != 0) currentPos--;
-      currentChar = theString[currentPos]-0x20;
-    } else if (NEW_BUTTON(BTN_RIGHT)) {
-      if (currentPos < 100) currentPos++;
-      if (currentPos > maxLen) {
-        maxLen = currentPos;
-        currentChar = 0;
-      } else {
-        currentChar = theString[currentPos]-0x20;
-      }
-    } else if (NEW_BUTTON(BTN_B)) {
-      theString[maxLen+1] = 0;
-      break;
-    }
-    theString[currentPos] = currentChar + 0x20;
-  }
-}
-
 uint8_t customMenuLen = sizeof(customMenu) / sizeof(customMenu[0]);
 
 void customMessage() {
   showMenu(customMenu, customMenuLen, 10000);
 }
-
 
 
 void showMenu(badgeStruct *thePrograms, uint8_t menuMax, uint16_t menuTimeout) {

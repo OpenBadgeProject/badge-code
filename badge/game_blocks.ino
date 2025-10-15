@@ -1,5 +1,10 @@
-
 #include "constants.h"
+
+/*
+ * This is a game called badgetris
+ * it's a little buggy and overly complicated. It could use a rewrite
+ * 
+ */
 
 void badgeBlock() {
   // Let's use a game board instead of just the framebuffer

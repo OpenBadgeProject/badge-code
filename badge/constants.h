@@ -7,16 +7,16 @@
 // Things you might want to change are all located here
 
 // Games to enable
-//#define DotGame
-//#define PongGame
-//#define SpaceGame
-//#define RainGame
-//#define BlockGame
-//#define LifeGame
-//#define RaceGame
-//#define CustomMessage
-//#define SecretPassword
-//#define EnableTests
+#define DotGame
+#define PongGame
+#define SpaceGame
+#define RainGame
+#define BlockGame
+#define LifeGame
+#define RaceGame
+#define CustomMessage
+#define SecretPassword
+#define EnableTests
 
 // Comment this out if you don't want a secret code
 //#define SecretCode
@@ -24,6 +24,10 @@
 // This is the default message that scrolls across the badge by default
 const char defaultMessage[] PROGMEM = "Default Badge Message ";
 const char codez[] PROGMEM = "sekrit codez!!!  ";
+
+// Password strings
+const char yes[] PROGMEM = "Correct ";
+const char no[] PROGMEM = "Wrong ";
 
 // The speed at which the message scrolls. Bigger numbers scroll slower
 #define messageDelay 30
@@ -36,7 +40,6 @@ const char codez[] PROGMEM = "sekrit codez!!!  ";
 // Below here are things you probably shouldn't change
 
 
-// Constants
 
 // Hardware related constants
 
@@ -49,7 +52,8 @@ const char codez[] PROGMEM = "sekrit codez!!!  ";
 #define dataPin2 PB3 // SR 2
 #define buttonPin PB4 // Button Input
 
-// Frame buffer variables
+// Frame buffer
+// Whatever is in this array will be written to the screen
 byte frameBuffer[] = {0,0,0,0,0,0,0,0};
 
 // Message display constants
@@ -58,14 +62,11 @@ unsigned int messageLen = 0;
 
 const char scoreMessage[] PROGMEM = "Score ";
 
-
 // Constants used when writing the message to the framebuffer
 unsigned int messageCount = 0;
 unsigned int lastButton = 0;
 
-// Tick constants
-// The millis() on this chip isn't very reliable, so let's just count up a tick
-// on every loop
+// millis uses up precious memory. Increment this on every loop
 unsigned int currentTick = 0;
 
 // State booleans
@@ -131,10 +132,6 @@ void teh_code();
 void badgeBlock();
 void secretPassword();
 void getString(unsigned char *theString);
-
-// Password strings
-const char yes[] PROGMEM = "Correct ";
-const char no[] PROGMEM = "Wrong ";
 
 // Main Menu things
 

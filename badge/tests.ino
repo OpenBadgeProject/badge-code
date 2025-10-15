@@ -1,5 +1,8 @@
-
 #include "constants.h"
+
+/*
+ * These are simple tests to help debugging the hardware
+ */
 
 void buttonTest() {
   while(true) {

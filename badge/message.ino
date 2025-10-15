@@ -1,16 +1,20 @@
-// Function that displays a message on the screen
-
 #include "constants.h"
+
+/*
+ * Functions that display various messages to the screen
+ * 
+ */
 
 bool progmemMessage = true;
 
-// Turn the score into a string
-// Using sprintf takes up 2K of program space
+// Print the score on the screen then return
 void printScore(unsigned int score) {
   uint8_t i = 0;
   unsigned int digit;
   unsigned char scoreString[10];
-
+  
+  // Turn the score into a string
+  // Using sprintf takes up 2K of program space
   printMessage(scoreMessage, true);
 
   scoreString[i++] = ' ';
@@ -47,8 +51,7 @@ void printMessage(unsigned char *newMessage, bool progmemMessage) {
   }
 }
 
-// Set the message to a string in PROGMEM
-// A string cannot be passed in here
+// Set the message to be displayed
 void setMessage(unsigned char *newMessage, bool progMem) {
 
   progmemMessage = progMem;
@@ -57,7 +60,10 @@ void setMessage(unsigned char *newMessage, bool progMem) {
   donePrinting = false;
   byte messageByte;
 
+  // Clear the framebuffer here. It's common to set the message then
+  // display it. It makes life easier
   clearFrameBuffer();
+
   // We have to write our own strlen as PROGMEM strings are different
   messageLen = 0;
   while (true) {
@@ -72,6 +78,7 @@ void setMessage(unsigned char *newMessage, bool progMem) {
 }
 
 
+// Show the message. This has to be called multiple times. You probably want printMessage()
 void showMessage()
 {
   // Scroll the display at a reasonable speed
@@ -80,13 +87,8 @@ void showMessage()
     /*
      * Copy message data into framebuffer
      * 
-     * We have two loops, the row then the column. We have to write the
-     * framebuffer data one row at a time.
-     * The way we are using the shift registers and LED matrix, rows on the matix are
-     * columns to us humans
-     * 
-     * I use the term "row" often, a row in our context is one column on the matrix
-     * This was done becuase it makes scrolling letters much much easier
+     * We shift the screen one pixel to the left, then shift in whatever
+     * the rightmost column is
      * 
      */
 
@@ -98,7 +100,7 @@ void showMessage()
      * are 6 pixels wide, the screen is 8
      * 
      * Don't think of the screen in terms of the letter we're showing
-     * thikn of it in terms of the column we are showing in the total message
+     * think of it in terms of the column we are showing in the total message
      */
 
     // letterPos will track the current letter we are displaying
@@ -135,43 +137,4 @@ void showMessage()
     }
   }
 
-}
-
-// Write all zeros to the framebuffer
-// Basically, clear the screen
-void clearFrameBuffer() {
-  memset(frameBuffer, 0, 8);
-  messageCount = 0;
-}
-
-// Set one point on the framebuffer
-void setFrameBuffer(uint8_t x, uint8_t y) {
-  if (x < 8 && y < 8)
-    frameBuffer[x] |= 1 << y;
-}
-
-// unSet one point on the framebuffer
-void unSetFrameBuffer(uint8_t x, uint8_t y) {
-  if (x < 8 && y < 8)
-    frameBuffer[x] &= ((1 << y) ^ 0xFF);
-}
-
-void secretPassword() {
-  unsigned char newString[100];
-  unsigned char *strPtr = newString;
-
-  getString(newString);
-
-  // Worst checksum ever
-  uint16_t checksum = 0;
-  while(*strPtr != '\0') {
-    checksum += *strPtr++;
-  }
-
-  // hunter2
-  if (checksum == 712) {
-    printMessage(yes, true);
-  } else {
-    printMessage(no, true);
-  }
 }

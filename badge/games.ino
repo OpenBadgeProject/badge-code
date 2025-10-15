@@ -1,5 +1,11 @@
-
 #include "constants.h"
+
+/*
+ * A collection of simple games
+ * 
+ * These are not well commented
+ * 
+ */
 
 void moveDot() {
   uint8_t x = 4 * 32;
@@ -348,5 +354,25 @@ void raceGame() {
 
     setFrameBuffer(car/4096, 6);
     setFrameBuffer(car/4096, 7);
+  }
+}
+
+void secretPassword() {
+  unsigned char newString[100];
+  unsigned char *strPtr = newString;
+
+  getString(newString);
+
+  // Worst checksum ever
+  uint16_t checksum = 0;
+  while(*strPtr != '\0') {
+    checksum += *strPtr++;
+  }
+
+  // hunter2
+  if (checksum == 712) {
+    printMessage(yes, true);
+  } else {
+    printMessage(no, true);
   }
 }

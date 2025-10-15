@@ -1,7 +1,9 @@
-// Function to process the shift registers
-
 #include "constants.h"
 
+/*
+ * Various helper functions are here
+ * 
+ */
 
 // The RNG state
 uint32_t rngState = 0;
@@ -36,6 +38,7 @@ void runTick() {
   } else {
     lastButton++;
   }
+  OLD_BUTTON = CUR_BUTTON;
 
   shiftRegisters();
 }
@@ -54,9 +57,8 @@ void runTick() {
  * 
  */
 void shiftRegisters() {
-      PORTB |= (1 << latchPin); // HIGH
       uint8_t currentRow = 1; // A bit vector for the LED row
-      OLD_BUTTON = CUR_BUTTON;
+      PORTB |= (1 << latchPin); // HIGH
 
       // Loop for each row
       for (int j = 0; j < 8; j++) {
@@ -75,8 +77,7 @@ void shiftRegisters() {
             PORTB &= ~(1 << dataPin1); // LOW
           }
 
-          // We write the data in backwards to scroll left
-          // (remove the 7 - to scroll right, but that would be weird)
+          // We write the data in backwards because it's shifted in
           if (!(frameBuffer[j] & (1 << (7 - i)))) {
             PORTB |= (1 << dataPin2); // HIGH
           } else {
@@ -114,4 +115,74 @@ void shiftRegisters() {
       }
       PORTB |= (1 << latchPin); // HIGH
       PORTB &= ~(1 << latchPin); // LOW
+}
+
+// Get a string from the user and return in the theString variable
+void getString(unsigned char *theString) {
+  int8_t currentChar = 0x21;
+  uint8_t currentPos = 0;
+  uint8_t maxLen = 0;
+  clearFrameBuffer();
+  while(1) {
+    LOOP(0);
+
+    for (int i = 0; i < 5; i++) {
+      byte the_char = pgm_read_byte(font + (currentChar * 5) + i);
+      frameBuffer[i] = the_char;
+    }
+    frameBuffer[6] = currentPos;
+    frameBuffer[7] = maxLen;
+
+    if (PUSH_BUTTON(BTN_DOWN)) {
+      if (TICK(30)) {
+        if (currentChar == 94) {
+          currentChar = 0;
+        } else {
+          currentChar++;
+        }
+      }
+    } else if (PUSH_BUTTON(BTN_UP)) {
+      if (TICK(30)) {
+        if (currentChar == 0) {
+          currentChar = 94;
+        } else {
+          currentChar--;
+        }
+      }
+    } else if (NEW_BUTTON(BTN_LEFT)) {
+      if (currentPos != 0) currentPos--;
+      currentChar = theString[currentPos]-0x20;
+    } else if (NEW_BUTTON(BTN_RIGHT)) {
+      if (currentPos < 100) currentPos++;
+      if (currentPos > maxLen) {
+        maxLen = currentPos;
+        currentChar = 0;
+      } else {
+        currentChar = theString[currentPos]-0x20;
+      }
+    } else if (NEW_BUTTON(BTN_B)) {
+      theString[maxLen+1] = 0;
+      break;
+    }
+    theString[currentPos] = currentChar + 0x20;
+  }
+}
+
+// Write all zeros to the framebuffer
+// Basically, clear the screen
+void clearFrameBuffer() {
+  memset(frameBuffer, 0, 8);
+  messageCount = 0;
+}
+
+// Set one point on the framebuffer
+void setFrameBuffer(uint8_t x, uint8_t y) {
+  if (x < 8 && y < 8)
+    frameBuffer[x] |= 1 << y;
+}
+
+// unSet one point on the framebuffer
+void unSetFrameBuffer(uint8_t x, uint8_t y) {
+  if (x < 8 && y < 8)
+    frameBuffer[x] &= ((1 << y) ^ 0xFF);
 }

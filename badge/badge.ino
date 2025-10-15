@@ -1,5 +1,9 @@
-
 #include "constants.h"
+
+/*
+ * The main program that makes it all work
+ * 
+ */
 
 uint8_t code_count = 0;
 

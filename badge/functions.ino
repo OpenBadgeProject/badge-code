@@ -58,16 +58,20 @@ void runTick() {
  */
 void shiftRegisters() {
       uint8_t currentRow = 1; // A bit vector for the LED row
+      uint8_t currentCol;
+      uint8_t frameMask; // The reverse bitmask of currentCol
+      uint8_t i, j;
       PORTB |= (1 << latchPin); // HIGH
 
       // Loop for each row
-      for (int j = 0; j < 8; j++) {
-        uint8_t currentCol = 0x01;
+      for (j = 0; j < 8; j++) {
+        currentCol = 0x01;
+        frameMask = 0x80;
         PORTB &= ~(1 << latchPin); // LOW
         // Loop for each col, writing/reading one bit per clock
         // Set the button to 0, we will fill in the bits as we go
         CUR_BUTTON = 0;
-        for (int i = 0; i < 8; i++)  {
+        for (i = 0; i < 8; i++)  {
 
           // In this code we have to extract the relevant bits to shift into 
           // the register
@@ -78,7 +82,7 @@ void shiftRegisters() {
           }
 
           // We write the data in backwards because it's shifted in
-          if (!(frameBuffer[j] & (1 << (7 - i)))) {
+          if (!(frameBuffer[j] & frameMask)) {
             PORTB |= (1 << dataPin2); // HIGH
           } else {
             PORTB &= ~(1 << dataPin2); // LOW
@@ -94,6 +98,7 @@ void shiftRegisters() {
           PORTB |= (1 << clockPin); // HIGH
           PORTB &= ~(1 << clockPin); // LOW
           currentCol = currentCol << 1;
+          frameMask = frameMask >> 1;
         }
         // Shift the row bit
         currentRow = currentRow << 1;
@@ -103,13 +108,14 @@ void shiftRegisters() {
       // Clear the screen
       // If we don't shift in nothing after a short delay,
       // the right most column is noticably brighter than the others
-      for (int i = 0; i < 100; i++) {
+      for (i = 0; i < 100; i++) {
+        // We have to kill some time. If we don't the last column is dim
         __asm__("nop\n\t");
       }
       PORTB &= ~(1 << latchPin); // LOW
       PORTB &= ~(1 << dataPin1); // LOW
       PORTB &= ~(1 << dataPin2); // LOW
-      for (int j = 0; j < 8; j++) {
+      for (j = 0; j < 8; j++) {
         PORTB |= (1 << clockPin); // HIGH
         PORTB &= ~(1 << clockPin); // LOW
       }

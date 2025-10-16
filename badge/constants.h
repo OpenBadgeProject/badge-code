@@ -7,16 +7,16 @@
 // Things you might want to change are all located here
 
 // Games to enable
-#define DotGame
-#define PongGame
-#define SpaceGame
-#define RainGame
-#define BlockGame
-#define LifeGame
-#define RaceGame
-#define CustomMessage
-#define SecretPassword
-#define EnableTests
+//#define DotGame
+//#define PongGame
+//#define SpaceGame
+//#define RainGame
+//#define BlockGame
+//#define LifeGame
+//#define RaceGame
+//#define CustomMessage
+//#define SecretPassword
+//#define EnableTests
 
 // Comment this out if you don't want a secret code
 //#define SecretCode
@@ -30,7 +30,7 @@ const char yes[] PROGMEM = "Correct ";
 const char no[] PROGMEM = "Wrong ";
 
 // The speed at which the message scrolls. Bigger numbers scroll slower
-#define messageDelay 30
+#define messageDelay 40
 
 // How many ticks should we wait until we return to home screen
 // Bigger numbers wait longer

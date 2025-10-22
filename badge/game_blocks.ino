@@ -14,18 +14,50 @@ void badgeBlock() {
 
   // All the blocks are a 4x4 array turned into an integer
   // The bits represent the blocks
-  short blocks[7] = {
-    0x0660, // square
-    0x0F00, // line
-    0x4620, // S
-    0x0264, // Z
-    0x0E80, // L
-    0x08E0, // backwards L
-    0x2620 // T
+  short blocks[4][7] = {
+    {
+      0x0660, // square X
+      0x0F00, // line X
+      0x4620, // S X
+      0x0264, // Z X
+      0x0740, // L X
+      0x0470, // backwards L
+      0x4640 // T
+    },
+    {
+      0x0660, // square
+      0x4444, // line
+      0x06C0, // S
+      0x0630, // Z
+      0x4460, // L
+      0x6440, // backwards L
+      0x7200 // T
+    },
+    {
+      0x0660, // square
+      0x0F00, // line
+      0x4620, // S
+      0x0264, // Z
+      0x0170, // L
+      0x0710, // backwards L
+      0x1310 // T
+    },
+    {
+      0x0660, // square
+      0x4444, // line
+      0x06C0, // S
+      0x0630, // Z
+      0x6220, // L
+      0x2260, // backwards L
+      0x0270 // T
+    }
   };
+  
 
   // Random first block, but we always use the same position
-  short block = blocks[RANDOM(7)];
+  uint8_t rotate = 0;
+  uint8_t the_block = RANDOM(7);
+  short block = blocks[rotate][the_block];
   int8_t block_x = 3;
   int8_t block_y = -4;
   byte line;
@@ -68,7 +100,9 @@ void badgeBlock() {
           // Get the next piece
           block_x = 3;
           block_y = -4;
-          block = blocks[RANDOM(7)];
+          rotate = 0;
+          the_block = RANDOM(7);
+          block = blocks[rotate][the_block];
           goto out; // Only bad people use goto
         }
       }
@@ -77,34 +111,17 @@ void badgeBlock() {
     }
 out:
     if (NEW_BUTTON(BTN_A)) {
-      short new_block = 0x0000;
-      // Rotate
-      // 0123456789ABCDEF
-      // 37BF26AE159D048C
-
-      // I will never remember how this works. Good luck
-      for (int i = 3; i >= 0; i--) {
-        new_block = (new_block << 1) | ((block & (0x0001 << i)) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 4))) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 8))) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 12))) ? 0x0001 : 0x0000);
-      }
-      block = new_block;
+      rotate = rotate + 1;
+      //if (rotate == 4) rotate = 0;
+      block = blocks[rotate][the_block];
     } else if (NEW_BUTTON(BTN_B)) {
-      short new_block = 0x0000;
-      // Rotate
-      // 0123456789ABCDEF
-      // C840D951EA62FB73
-
-      // This is just the opposite of the above
-      for (int i = 0; i < 4; i++) {
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 12))) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 8))) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << (i + 4))) ? 0x0001 : 0x0000);
-        new_block = (new_block << 1) | ((block & (0x0001 << i)) ? 0x0001 : 0x0000);
-      }
-      block = new_block;
+      //if (rotate == 0) rotate = 3;
+      //else rotate = rotate - 1;
+      rotate = rotate - 1;
+      block = blocks[rotate][the_block];
     }
+    rotate = 0x03 & rotate;
+    block = blocks[rotate][the_block];
 
     if (NEW_BUTTON(BTN_LEFT)) {
       block_x--;

@@ -31,7 +31,7 @@ void badgeBlock() {
       0x0630, // Z
       0x4460, // L
       0x6440, // backwards L
-      0x7200 // T
+      0x0E40 // T
     },
     {
       0x0660, // square
@@ -40,7 +40,7 @@ void badgeBlock() {
       0x0264, // Z
       0x0170, // L
       0x0710, // backwards L
-      0x1310 // T
+      0x4C40 // T
     },
     {
       0x0660, // square
@@ -49,7 +49,7 @@ void badgeBlock() {
       0x0630, // Z
       0x6220, // L
       0x2260, // backwards L
-      0x0270 // T
+      0x4E00 // T
     }
   };
   
@@ -176,12 +176,12 @@ out:
     // Do we have a copmlete line? delete it
     byte row_mask = 0x00;
     byte row_mask_neg = 0xFF;
+    byte cb = 0x80;
     // We loop once per row
     for (int i = 0; i < 8; i++) {
       // We use the row mask and a negative row mask to do some quick bit operations later
       row_mask = (row_mask >> 1) | 0x80;
       row_mask_neg = row_mask_neg >> 1;
-      byte cb = 0x80 >> i; // current bit
 
       // This is easier unrolled
       bool full = (screen[0] & cb) &&
@@ -192,6 +192,7 @@ out:
                   (screen[5] & cb) &&
                   (screen[6] & cb) &&
                   (screen[7] & cb);
+      cb = cb >> 1;
       if (full) {
         // We have a full line
         score++;

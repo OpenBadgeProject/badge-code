@@ -81,8 +81,10 @@ void setMessage(unsigned char *newMessage, bool progMem) {
 // Show the message. This has to be called multiple times. You probably want printMessage()
 void showMessage()
 {
+  static unsigned int lastTick = 0;
   // Scroll the display at a reasonable speed
-  if (TICK(messageDelay)) {
+  if (lastTick + messageDelay < currentTick) {
+    lastTick = currentTick;
 
     /*
      * Copy message data into framebuffer

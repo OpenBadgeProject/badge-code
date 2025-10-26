@@ -21,6 +21,36 @@ const char secretCode[] = {
 };
 
 void setup() {
+  // 60Hz interrupt setup
+  TCCR1 = 0; // Stop timer
+  TCNT1 = 0; // Zero timer
+  TIMSK = _BV(TOIE1); // Interrupt on overflow
+    
+  // Start timer in CTC mode; prescaler = 512;
+  // This controls the framerate
+  // 512 is 60FPS
+  // Lower FPS means more time to do things between frames
+  //TCCR1 = _BV(CS13) | _BV(CS11);
+  TCCR1 = _BV(CS13);
+  
+  /*
+   * CS13 CS12 CS11 CS10  Clock divisor
+   *   0    1    1    1    64
+   *   1    0    0    0    128
+   *   1    0    0    1    256
+   *   1    0    1    0    512
+   *   1    0    1    1    1024
+   *   1    1    0    0    2048
+   *   1    1    0    1    4096
+   *   1    1    1    0    8192
+   *   1    1    1    1    16384
+   */
+  
+  sei(); // Enable interrupts
+
+
+
+  
 //set pins to output so you can control the shift register
 
 // We will talk straight to the input/output register
@@ -36,7 +66,7 @@ setMessage(defaultMessage, true);
 }
 
 void loop() {
-  runTick();
+  //runTick();
   showMessage();
 
   // If we see a new keypress, load the menu

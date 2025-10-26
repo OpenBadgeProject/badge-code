@@ -30,7 +30,7 @@ const char yes[] PROGMEM = "Correct ";
 const char no[] PROGMEM = "Wrong ";
 
 // The speed at which the message scrolls. Bigger numbers scroll slower
-#define messageDelay 40
+#define messageDelay 10
 
 // How many ticks should we wait until we return to home screen
 // Bigger numbers wait longer
@@ -54,7 +54,7 @@ const char no[] PROGMEM = "Wrong ";
 
 // Frame buffer
 // Whatever is in this array will be written to the screen
-byte frameBuffer[] = {0,0,0,0,0,0,0,0};
+byte volatile frameBuffer[] = {0,0,0,0,0,0,0,0};
 
 // Message display constants
 const char* message;
@@ -64,10 +64,10 @@ const char scoreMessage[] PROGMEM = "Score ";
 
 // Constants used when writing the message to the framebuffer
 unsigned int messageCount = 0;
-unsigned int lastButton = 0;
+unsigned int volatile lastButton = 0;
 
 // millis uses up precious memory. Increment this on every loop
-unsigned int currentTick = 0;
+unsigned int volatile currentTick = 0;
 
 // State booleans
 bool donePrinting = false;
@@ -80,7 +80,6 @@ bool donePrinting = false;
 // to not ever timeout. If no timeout is used it's up to the function
 // to return
 #define LOOP(loop_define_timeout) {\
-  runTick();\
   if (loop_define_timeout && (lastButton > loop_define_timeout)) {\
     return;\
   }\
@@ -97,8 +96,8 @@ bool donePrinting = false;
 #define BTN_UP 0x08
 #define BTN_DOWN 0x01
 
-uint8_t CUR_BUTTON = 0x00;
-uint8_t OLD_BUTTON = 0x00;
+uint8_t volatile CUR_BUTTON = 0x00;
+uint8_t volatile OLD_BUTTON = 0x00;
 
 // Button functionality
 
@@ -120,7 +119,7 @@ void moveDot();
 void showMenu();
 void screenTest();
 void buttonTest();
-void runTick();
+//void runTick();
 void pongGame();
 void spaceGame();
 void showRain();

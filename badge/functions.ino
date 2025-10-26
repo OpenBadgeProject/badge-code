@@ -27,7 +27,8 @@ uint32_t random32()
 }
 
 
-void runTick() {
+//void runTick() {
+ISR (TIMER1_OVF_vect) {
   
   // We count the number of loops instead of using millis()
   // On the ATTINY85 chip the millis() retuns odd things

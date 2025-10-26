@@ -74,13 +74,20 @@ void badgeBlock() {
       // Check if the piece is hitting anything
       for (int i = 0; i < 4; i++) {
         // Get the 4 bytes for the col we care about
+        // We work column by column for this detection code
         line = (block >> ((3-i) * 4)) & 0x0F;
+
+        // Here we shift the block into its position on the play screen
         if (block_y < 0) {
-          // Negative bitshifts aren't a thing
+          // The block can be above the screen
+          // if it is we have to shift the opposite direction
           line = line >> block_y * -1;
         } else {
           line = line << block_y;
         }
+
+        // Does the piece intersect with a dot on the screen
+        // directly below the current position?
         if (line & 0x80 || (line << 1) & screen[block_x+i]) {
           // Do we have a game over?
           if (block_y == -2) {
@@ -112,14 +119,13 @@ void badgeBlock() {
 out:
     if (NEW_BUTTON(BTN_A)) {
       rotate = rotate + 1;
-      //if (rotate == 4) rotate = 0;
       block = blocks[rotate][the_block];
     } else if (NEW_BUTTON(BTN_B)) {
-      //if (rotate == 0) rotate = 3;
-      //else rotate = rotate - 1;
       rotate = rotate - 1;
       block = blocks[rotate][the_block];
     }
+    // To save bytes, we don't check if the additoin or subtraction overflow
+    // We just use the bottom two bits
     rotate = 0x03 & rotate;
     block = blocks[rotate][the_block];
 

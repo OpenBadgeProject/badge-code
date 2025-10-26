@@ -62,6 +62,7 @@ void shiftRegisters() {
       uint8_t currentCol;
       uint8_t frameMask; // The reverse bitmask of currentCol
       uint8_t i, j;
+      cli();
       PORTB |= (1 << latchPin); // HIGH
 
       // Loop for each row
@@ -83,7 +84,7 @@ void shiftRegisters() {
           }
 
           // We write the data in backwards because it's shifted in
-          if (!(frameBuffer[j] & frameMask)) {
+          if (!(blitBuffer[j] & frameMask)) {
             PORTB |= (1 << dataPin2); // HIGH
           } else {
             PORTB &= ~(1 << dataPin2); // LOW
@@ -100,6 +101,10 @@ void shiftRegisters() {
           PORTB &= ~(1 << clockPin); // LOW
           currentCol = currentCol << 1;
           frameMask = frameMask >> 1;
+          for (uint8_t ll = 0; ll < 100; ll++) {
+            // We have to kill some time. If we don't the last column is dim
+            __asm__("nop\n\t");
+          }
         }
         // Shift the row bit
         currentRow = currentRow << 1;
@@ -109,10 +114,10 @@ void shiftRegisters() {
       // Clear the screen
       // If we don't shift in nothing after a short delay,
       // the right most column is noticably brighter than the others
-      for (i = 0; i < 100; i++) {
-        // We have to kill some time. If we don't the last column is dim
-        __asm__("nop\n\t");
-      }
+//      for (i = 0; i < 200; i++) {
+//        // We have to kill some time. If we don't the last column is dim
+//        __asm__("nop\n\t");
+//      }
       PORTB &= ~(1 << latchPin); // LOW
       PORTB &= ~(1 << dataPin1); // LOW
       PORTB &= ~(1 << dataPin2); // LOW
@@ -122,6 +127,7 @@ void shiftRegisters() {
       }
       PORTB |= (1 << latchPin); // HIGH
       PORTB &= ~(1 << latchPin); // LOW
+      sei();
 }
 
 // Get a string from the user and return in the theString variable
@@ -192,4 +198,13 @@ void setFrameBuffer(uint8_t x, uint8_t y) {
 void unSetFrameBuffer(uint8_t x, uint8_t y) {
   if (x < 8 && y < 8)
     frameBuffer[x] &= ((1 << y) ^ 0xFF);
+}
+
+void blit() {
+  cli();
+  for (uint8_t i = 0; i < 8; i++) {
+    blitBuffer[i] = frameBuffer[i];
+  }
+  sei();
+  
 }

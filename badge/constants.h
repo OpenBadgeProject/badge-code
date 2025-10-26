@@ -30,7 +30,7 @@ const char yes[] PROGMEM = "Correct ";
 const char no[] PROGMEM = "Wrong ";
 
 // The speed at which the message scrolls. Bigger numbers scroll slower
-#define messageDelay 10
+#define messageDelay 100
 
 // How many ticks should we wait until we return to home screen
 // Bigger numbers wait longer
@@ -55,6 +55,7 @@ const char no[] PROGMEM = "Wrong ";
 // Frame buffer
 // Whatever is in this array will be written to the screen
 byte volatile frameBuffer[] = {0,0,0,0,0,0,0,0};
+byte volatile blitBuffer[] = {0,0,0,0,0,0,0,0};
 
 // Message display constants
 const char* message;

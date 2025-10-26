@@ -137,6 +137,7 @@ void showMessage()
       messageCount = 0;
       donePrinting = true;
     }
+    blit();
   }
 
 }

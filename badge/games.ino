@@ -357,6 +357,21 @@ void raceGame() {
   }
 }
 
+void snowCrash() {
+  while(true) {
+    LOOP(0);
+    clearFrameBuffer();
+    if (NEW_BUTTON(BTN_B)) return;
+
+    for (uint8_t i = 0; i < 8; i++) {
+      for (uint8_t j = 0; j < 8; j++) {
+        if (RANDOM(2))
+          setFrameBuffer(i, j);
+      }
+    }
+  }
+}
+
 void secretPassword() {
   unsigned char newString[100];
   unsigned char *strPtr = newString;

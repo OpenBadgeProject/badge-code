@@ -8,6 +8,7 @@
 
 // Games to enable
 //#define DotGame
+//#define SnowCrash
 //#define PongGame
 //#define SpaceGame
 //#define RainGame
@@ -126,6 +127,7 @@ void spaceGame();
 void showRain();
 void lifeGame();
 void raceGame();
+void snowCrash();
 void customMessage();
 uint32_t random32();
 void teh_code();
@@ -148,6 +150,7 @@ const char menu8[] PROGMEM = "Badgetris ";
 const char menu9[] PROGMEM = "Conway's Life ";
 const char menu10[] PROGMEM = "Race ";
 const char menu11[] PROGMEM = "Enter code ";
+const char menu12[] PROGMEM = "Snow Crash ";
 
 typedef struct badgeStruct {
   const char *programName;
@@ -199,6 +202,12 @@ badgeStruct mainMenu[] = {
   {
     menu2,
     (*moveDot)
+  },
+#endif
+#ifdef SnowCrash
+  {
+    menu12,
+    (*snowCrash)
   },
 #endif
 #ifdef PongGame
